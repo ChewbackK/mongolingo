@@ -1,0 +1,12 @@
+[
+  { "nom": "Mer Agitee", "secteur": "course a la voile", "ville": "Lorient", "siret": "12345678900012", "contact": { "nom": "Jean Dupont", "email": "j.dupont@meragitee.com", "tel": "0612345678" } },
+  { "nom": "BreizhMarine", "secteur": "peche industrielle", "ville": "Concarneau", "siret": "23456789000023", "contact": { "nom": "Marie Le Bras", "email": "m.lebras@breizhmarine.fr", "tel": "0623456789" } },
+  { "nom": "Atlantic Drones", "secteur": "drones sous-marins", "ville": "Brest", "siret": "34567890100034", "contact": { "nom": "Pierre Cozic", "email": "p.cozic@atlanticdrones.com", "tel": "0634567890" } },
+  { "nom": "Voiles de l'Ouest", "secteur": "charter voiliers", "ville": "Vannes", "siret": "45678901200045", "contact": { "nom": "Sophie Guegan", "email": "s.guegan@voilesouest.fr", "tel": "0645678901" } },
+  { "nom": "OceanTech Solutions", "secteur": "oceanographie", "ville": "Saint-Malo", "siret": "56789012300056", "contact": { "nom": "Luc Mahe", "email": "l.mahe@oceantech.fr", "tel": "0656789012" } },
+  { "nom": "ArmorPeche", "secteur": "peche artisanale", "ville": "Douarnenez", "contact": { "nom": "Yves Kerlan", "email": "y.kerlan@armorpeche.bzh", "tel": "0667890123" } },
+  { "nom": "NaviData", "secteur": "logistique maritime", "ville": "Nantes", "siret": "78901234500078", "contact": { "nom": "Claire Rouxel", "email": "c.rouxel@navidata.com", "tel": "0678901234" } },
+  { "nom": "TideSoft", "secteur": "aquaculture", "ville": "Quimper", "siret": "89012345600089", "contact": { "nom": "Thomas Prigent", "email": "t.prigent@tidesoft.fr", "tel": "0689012345" } },
+  { "nom": "GolfStream Analytics", "secteur": "meteo marine", "ville": "La Rochelle", "siret": "90123456700090", "contact": { "nom": "Anne Riviere", "email": "a.riviere@golfstream.fr", "tel": "0690123456" } },
+  { "nom": "MarinConnect", "secteur": "tourisme nautique", "ville": "Saint-Nazaire", "siret": "01234567800001", "contact": { "nom": "Julien Moreau", "email": "j.moreau@marinconnect.com", "tel": "0601234567" } }
+]

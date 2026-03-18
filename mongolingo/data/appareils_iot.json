@@ -1,0 +1,14 @@
+[
+  { "id_appareil": "CAPT-001", "type": "capteur_vent", "bateau": "Mer Agitee IV", "config": { "frequence_hz": 10, "seuil_alerte": 40 }, "localisation": { "lat": 47.65, "lng": -2.76 }, "actif": true },
+  { "id_appareil": "CAPT-002", "type": "capteur_temp", "bateau": "Mer Agitee IV", "config": { "frequence_hz": 5, "seuil_alerte": 25 }, "localisation": { "lat": 47.65, "lng": -2.76 }, "actif": true },
+  { "id_appareil": "CAPT-003", "type": "gps", "bateau": "Mer Agitee IV", "config": { "frequence_hz": 1, "seuil_alerte": 0 }, "localisation": { "lat": 47.65, "lng": -2.76 }, "actif": true },
+  { "id_appareil": "CAPT-004", "type": "capteur_vent", "bateau": "BreizhMarine I", "config": { "frequence_hz": 8, "seuil_alerte": 35 }, "localisation": { "lat": 47.87, "lng": -3.92 }, "actif": true },
+  { "id_appareil": "CAPT-005", "type": "capteur_temp", "bateau": "BreizhMarine I", "config": { "frequence_hz": 5, "seuil_alerte": 22 }, "localisation": { "lat": 47.87, "lng": -3.92 }, "actif": true },
+  { "id_appareil": "CAPT-006", "type": "capteur_cap", "bateau": "BreizhMarine I", "config": { "frequence_hz": 2, "seuil_alerte": 0 }, "localisation": { "lat": 47.87, "lng": -3.92 }, "actif": false },
+  { "id_appareil": "CAPT-007", "type": "capteur_vent", "bateau": "SubDrone Alpha", "config": { "frequence_hz": 20, "seuil_alerte": 30 }, "localisation": { "lat": 48.39, "lng": -4.49 }, "actif": true },
+  { "id_appareil": "CAPT-008", "type": "capteur_temp", "bateau": "SubDrone Alpha", "config": { "frequence_hz": 10, "seuil_alerte": 28 }, "localisation": { "lat": 48.39, "lng": -4.49 }, "actif": true },
+  { "id_appareil": "CAPT-009", "type": "gps", "bateau": "Voilier Charter I", "config": { "frequence_hz": 1, "seuil_alerte": 0 }, "localisation": { "lat": 47.64, "lng": -2.78 }, "actif": true },
+  { "id_appareil": "CAPT-010", "type": "capteur_vent", "bateau": "OceanLab II", "config": { "frequence_hz": 15, "seuil_alerte": 45 }, "localisation": { "lat": 48.65, "lng": -2.00 }, "actif": true },
+  { "id_appareil": "CAPT-011", "type": "capteur_temp", "bateau": "AquaFarm I", "config": { "frequence_hz": 5, "seuil_alerte": 30 }, "localisation": { "lat": 47.99, "lng": -4.10 }, "actif": false },
+  { "id_appareil": "CAPT-012", "type": "capteur_cap", "bateau": "CoastRunner", "config": { "frequence_hz": 2, "seuil_alerte": 0 }, "localisation": { "lat": 47.27, "lng": -2.21 }, "actif": true }
+]

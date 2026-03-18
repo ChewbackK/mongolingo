@@ -1,0 +1,10 @@
+[
+  { "nom": "Goulven Kerbellec", "role": "fondateur", "competences": ["React", "React-Native", "MongoDB", "C++", "Java"], "projet_titres": ["TrimControl", "TrimControl v2", "SubDroneOS"], "salaire": 4500, "embauche": "2018-01-15T00:00:00Z" },
+  { "nom": "Maelys Le Gall", "role": "lead dev", "competences": ["React", "TypeScript", "Node.js", "MongoDB"], "projet_titres": ["MarineWatch", "OceanDashboard", "CargoFlow", "PortConnect"], "salaire": 3800, "embauche": "2019-03-01T00:00:00Z" },
+  { "nom": "Corentin Morvan", "role": "dev fullstack", "competences": ["React-Native", "Python", "MongoDB", "Docker"], "projet_titres": ["PecheTracker", "NautiGuide", "FishRadar"], "salaire": 3200, "embauche": "2020-09-01T00:00:00Z" },
+  { "nom": "Enora Perrot", "role": "dev frontend", "competences": ["React", "CSS", "Figma", "TypeScript"], "projet_titres": ["OceanDashboard", "SailBooking", "CoastExplorer"], "salaire": 3000, "embauche": "2021-01-15T00:00:00Z" },
+  { "nom": "Yann Jegou", "role": "dev iot", "competences": ["C++", "Arduino", "Python", "MQTT"], "projet_titres": ["SeaLogger", "AquaMonitor", "TideAlert"], "salaire": 3400, "embauche": "2020-03-01T00:00:00Z" },
+  { "nom": "Nolwenn Cariou", "role": "data engineer", "competences": ["Python", "MongoDB", "Elasticsearch", "Kafka"], "projet_titres": ["WaveForecast", "StormPredict"], "salaire": 3600, "embauche": "2021-06-01T00:00:00Z" },
+  { "nom": "Titouan Hemon", "role": "dev mobile", "competences": ["React-Native", "Swift", "Kotlin"], "projet_titres": ["SkipperApp", "TrimControl v2", "CoastExplorer"], "salaire": 3100, "embauche": "2022-01-10T00:00:00Z" },
+  { "nom": "Anais Quere", "role": "devops", "competences": ["Docker", "Kubernetes", "AWS", "Linux"], "projet_titres": ["CargoFlow", "PortConnect", "DroneNav"], "salaire": 3500, "embauche": "2021-09-15T00:00:00Z" }
+]
