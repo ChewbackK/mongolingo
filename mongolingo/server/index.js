@@ -14,7 +14,7 @@ async function start() {
   app.locals.db = db;
 
   // Routes will be added in later tasks
-  // app.use('/api/health', require('./routes/health'));
+  app.use('/api/health', require('./routes/health'));
   // app.use('/api/quiz', require('./routes/quiz'));
   // app.use('/api/collections', require('./routes/collections'));
   // app.use('/api/data', require('./routes/data'));
