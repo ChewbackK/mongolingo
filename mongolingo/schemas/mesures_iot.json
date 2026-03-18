@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "mesures_iot",
+  "description": "Serie temporelle de releves capteurs maritimes",
+  "type": "object",
+  "required": ["appareil_id", "timestamp", "type", "valeur", "unite"],
+  "properties": {
+    "appareil_id": { "type": "string", "description": "Reference vers l'appareil (id_appareil)" },
+    "timestamp": { "type": "string", "format": "date-time", "description": "Horodatage de la mesure" },
+    "type": {
+      "type": "string",
+      "enum": ["vitesse_vent", "temperature_eau", "cap", "vitesse_gps"],
+      "description": "Type de mesure"
+    },
+    "valeur": { "type": "number", "description": "Valeur numerique mesuree" },
+    "unite": {
+      "type": "string",
+      "enum": ["noeuds", "celsius", "degres"],
+      "description": "Unite de mesure"
+    },
+    "alerte": { "type": "boolean", "description": "Seuil d'alerte depasse" }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "employes",
+  "description": "Equipe Cyberespar avec competences, roles et projets assignes",
+  "type": "object",
+  "required": ["nom", "role", "competences", "salaire", "embauche"],
+  "properties": {
+    "nom": { "type": "string", "description": "Nom complet de l'employe" },
+    "role": {
+      "type": "string",
+      "enum": ["fondateur", "lead dev", "dev fullstack", "dev frontend", "dev iot", "data engineer", "dev mobile", "devops"],
+      "description": "Poste dans l'entreprise"
+    },
+    "competences": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Technologies maitrisees"
+    },
+    "projets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "References vers les projets assignes (ObjectId)"
+    },
+    "salaire": { "type": "number", "description": "Salaire mensuel brut en euros" },
+    "embauche": { "type": "string", "format": "date-time", "description": "Date d'embauche" }
+  }
+}

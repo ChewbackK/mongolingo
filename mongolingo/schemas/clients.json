@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "clients",
+  "description": "Entreprises clientes de Cyberespar, specialisees dans le maritime et les technologies",
+  "type": "object",
+  "required": ["nom", "secteur", "ville"],
+  "properties": {
+    "nom": { "type": "string", "description": "Raison sociale du client" },
+    "secteur": { "type": "string", "description": "Domaine d'activite du client" },
+    "ville": { "type": "string", "description": "Ville du siege social" },
+    "siret": { "type": "string", "pattern": "^[0-9]{14}$", "description": "Numero SIRET (14 chiffres)" },
+    "contact": {
+      "type": "object",
+      "description": "Contact principal chez le client",
+      "properties": {
+        "nom": { "type": "string", "description": "Nom du contact" },
+        "email": { "type": "string", "format": "email", "description": "Email professionnel" },
+        "tel": { "type": "string", "description": "Telephone" }
+      },
+      "required": ["nom", "email"]
+    }
+  }
+}

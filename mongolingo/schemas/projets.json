@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "projets",
+  "description": "Projets realises par Cyberespar pour ses clients (IoT, mobile, web)",
+  "type": "object",
+  "required": ["titre", "client_id", "technologies", "budget", "debut", "statut"],
+  "properties": {
+    "titre": { "type": "string", "description": "Nom du projet" },
+    "client_id": { "type": "string", "description": "Reference vers le client (ObjectId)" },
+    "technologies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Stack technique utilisee"
+    },
+    "budget": { "type": "number", "minimum": 0, "description": "Budget en euros" },
+    "debut": { "type": "string", "format": "date-time", "description": "Date de debut" },
+    "fin": { "type": ["string", "null"], "format": "date-time", "description": "Date de fin (null si en cours)" },
+    "statut": {
+      "type": "string",
+      "enum": ["planifie", "en cours", "termine"],
+      "description": "Etat d'avancement"
+    },
+    "description": { "type": "string", "description": "Description courte du projet" }
+  }
+}

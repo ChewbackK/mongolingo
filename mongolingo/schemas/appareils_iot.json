@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "appareils_iot",
+  "description": "Capteurs maritimes connectes utilises par les clients Cyberespar",
+  "type": "object",
+  "required": ["id_appareil", "type", "bateau", "actif"],
+  "properties": {
+    "id_appareil": { "type": "string", "description": "Identifiant unique de l'appareil (ex: CAPT-001)" },
+    "type": {
+      "type": "string",
+      "enum": ["capteur_vent", "capteur_temp", "capteur_cap", "gps"],
+      "description": "Type de capteur"
+    },
+    "bateau": { "type": "string", "description": "Nom du bateau equipe" },
+    "config": {
+      "type": "object",
+      "properties": {
+        "frequence_hz": { "type": "number", "description": "Frequence d'echantillonnage en Hz" },
+        "seuil_alerte": { "type": "number", "description": "Valeur declenchant une alerte" }
+      }
+    },
+    "localisation": {
+      "type": "object",
+      "properties": {
+        "lat": { "type": "number", "description": "Latitude GPS" },
+        "lng": { "type": "number", "description": "Longitude GPS" }
+      }
+    },
+    "actif": { "type": "boolean", "description": "Appareil en service" }
+  }
+}
