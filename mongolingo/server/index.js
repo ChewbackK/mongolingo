@@ -16,8 +16,8 @@ async function start() {
   // Routes will be added in later tasks
   app.use('/api/health', require('./routes/health'));
   // app.use('/api/quiz', require('./routes/quiz'));
-  // app.use('/api/collections', require('./routes/collections'));
-  // app.use('/api/data', require('./routes/data'));
+  app.use('/api/collections', require('./routes/collections'));
+  app.use('/api/data', require('./routes/data'));
 
   // Serve client build in production
   if (process.env.NODE_ENV === 'production') {
