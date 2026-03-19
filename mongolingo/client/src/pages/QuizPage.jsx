@@ -9,7 +9,7 @@ export default function QuizPage() {
   const { progress, markCompleted, isCompleted } = useProgress();
 
   useEffect(() => {
-    fetch('/api/quiz').then(r => r.json()).then(setQuizzes);
+    fetch('/api/quiz').then(r => r.json()).then(setQuizzes).catch(() => {});
   }, []);
 
   if (currentQuiz) {

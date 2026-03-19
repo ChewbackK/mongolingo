@@ -10,10 +10,15 @@ app.use(express.json());
 const PORT = process.env.PORT || 3001;
 
 async function start() {
-  const db = await connectDB();
-  app.locals.db = db;
+  try {
+    const db = await connectDB();
+    app.locals.db = db;
+  } catch (err) {
+    console.error(`MongoDB non disponible: ${err.message}`);
+    console.log('Le serveur demarre sans connexion MongoDB. Lancez mongod puis rechargez.');
+    app.locals.db = null;
+  }
 
-  // Routes will be added in later tasks
   app.use('/api/health', require('./routes/health'));
   app.use('/api/quiz', require('./routes/quiz'));
   app.use('/api/collections', require('./routes/collections'));

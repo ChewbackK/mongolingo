@@ -7,17 +7,19 @@ export default function CollectionsPage() {
   const [sample, setSample] = useState(null);
 
   useEffect(() => {
-    fetch('/api/collections').then(r => r.json()).then(setCollections);
+    fetch('/api/collections').then(r => r.json()).then(setCollections).catch(() => {});
   }, []);
 
   const selectCollection = async (name) => {
     setSelected(name);
-    const [schemaRes, sampleRes] = await Promise.all([
-      fetch(`/api/collections/${name}/schema`).then(r => r.json()),
-      fetch(`/api/collections/${name}/sample`).then(r => r.json()),
-    ]);
-    setSchema(schemaRes);
-    setSample(sampleRes);
+    try {
+      const [schemaRes, sampleRes] = await Promise.all([
+        fetch(`/api/collections/${name}/schema`).then(r => r.json()),
+        fetch(`/api/collections/${name}/sample`).then(r => r.json()),
+      ]);
+      setSchema(schemaRes);
+      setSample(sampleRes);
+    } catch {}
   };
 
   const renderProperties = (properties, required = []) => {

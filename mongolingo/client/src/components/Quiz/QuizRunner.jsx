@@ -12,7 +12,8 @@ export default function QuizRunner({ quiz, onBack, onComplete }) {
   useEffect(() => {
     fetch(`/api/quiz/${quiz.id}`)
       .then(r => r.json())
-      .then(setFullQuiz);
+      .then(setFullQuiz)
+      .catch(() => {});
   }, [quiz.id]);
 
   if (!fullQuiz) return <div className="loading">Chargement...</div>;
@@ -38,9 +39,11 @@ export default function QuizRunner({ quiz, onBack, onComplete }) {
   };
 
   const handleGetHint = async () => {
-    const res = await fetch(`/api/quiz/${quiz.id}/hint`);
-    const data = await res.json();
-    alert(data.hint);
+    try {
+      const res = await fetch(`/api/quiz/${quiz.id}/hint`);
+      const data = await res.json();
+      alert(data.hint);
+    } catch {}
   };
 
   const ModeComponent = { qcm: QCM, blancs: FillBlanks, libre: FreeInput }[fullQuiz.mode];
