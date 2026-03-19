@@ -1,3 +1,21 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout';
+import QuizPage from './pages/QuizPage';
+import CollectionsPage from './pages/CollectionsPage';
+import DataPage from './pages/DataPage';
+import ProgressPage from './pages/ProgressPage';
+
 export default function App() {
-  return <div className="app"><p>mongolingo</p></div>;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<QuizPage />} />
+          <Route path="/collections" element={<CollectionsPage />} />
+          <Route path="/data" element={<DataPage />} />
+          <Route path="/progress" element={<ProgressPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
