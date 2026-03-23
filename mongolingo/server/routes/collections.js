@@ -10,6 +10,7 @@ const ALLOWED_COLLECTIONS = ['clients', 'projets', 'employes', 'appareils_iot', 
 router.get('/', async (req, res) => {
   try {
     const db = req.app.locals.db;
+    if (!db) return res.status(503).json({ error: 'MongoDB non disponible' });
     const collections = [];
     for (const name of ALLOWED_COLLECTIONS) {
       const stats = await db.collection(name).aggregate([
@@ -46,6 +47,7 @@ router.get('/:name/sample', async (req, res) => {
   }
   try {
     const db = req.app.locals.db;
+    if (!db) return res.status(503).json({ error: 'MongoDB non disponible' });
     const docs = await db.collection(name).find({}).limit(3).toArray();
     res.json(docs);
   } catch (err) {

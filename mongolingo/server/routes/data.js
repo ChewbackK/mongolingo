@@ -16,6 +16,7 @@ const DATA_DIR = path.join(__dirname, '../../data');
 router.post('/load', async (req, res) => {
   try {
     const db = req.app.locals.db;
+    if (!db) return res.status(503).json({ error: 'MongoDB non disponible' });
 
     // 1. Drop existing collections
     const existing = await db.listCollections().toArray();
@@ -77,6 +78,7 @@ router.post('/load', async (req, res) => {
 router.get('/export/json', async (req, res) => {
   try {
     const db = req.app.locals.db;
+    if (!db) return res.status(503).json({ error: 'MongoDB non disponible' });
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', 'attachment; filename=mongolingo-export.zip');
 
