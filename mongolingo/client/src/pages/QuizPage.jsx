@@ -38,6 +38,99 @@ function computeNextQuiz(quizzes, currentQuiz, unlockedLevels) {
 
 const LEVEL_TITLES = ['Lecture basique', 'Filtres et opérateurs', 'Modifications et index', 'Agrégation', 'Pipelines complexes'];
 
+function CollectionsPanel() {
+  const [collections, setCollections] = useState([]);
+  const [expanded, setExpanded] = useState(null);
+  const [detail, setDetail] = useState({});
+
+  useEffect(() => {
+    fetch('/api/collections')
+      .then(r => r.ok ? r.json() : [])
+      .then(setCollections)
+      .catch(() => {});
+  }, []);
+
+  const toggle = async (name) => {
+    if (expanded === name) { setExpanded(null); return; }
+    setExpanded(name);
+    if (!detail[name]) {
+      try {
+        const [schema, sample] = await Promise.all([
+          fetch(`/api/collections/${name}/schema`).then(r => r.json()),
+          fetch(`/api/collections/${name}/sample`).then(r => r.json()),
+        ]);
+        setDetail(d => ({ ...d, [name]: { schema, sample } }));
+      } catch {}
+    }
+  };
+
+  return (
+    <div style={{
+      width: 280, flexShrink: 0,
+      background: 'var(--bg-surface)', borderLeft: '1px solid var(--border)',
+      overflowY: 'auto', padding: '16px 0',
+      position: 'sticky', top: 48, maxHeight: 'calc(100vh - 48px)',
+    }}>
+      <div style={{ padding: '0 16px 10px', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.6px', color: 'var(--text-tertiary)' }}>
+        Collections Cyberespar
+      </div>
+      {collections.length === 0 && (
+        <div style={{ padding: '8px 16px', fontSize: 12, color: 'var(--text-tertiary)' }}>
+          MongoDB non disponible
+        </div>
+      )}
+      {collections.map(c => (
+        <div key={c.name}>
+          <div
+            onClick={() => toggle(c.name)}
+            style={{
+              padding: '7px 16px', cursor: 'pointer', display: 'flex',
+              alignItems: 'center', justifyContent: 'space-between',
+              background: expanded === c.name ? 'var(--bg-elevated)' : 'transparent',
+              borderLeft: expanded === c.name ? '2px solid var(--accent)' : '2px solid transparent',
+            }}
+          >
+            <span style={{ fontSize: 12, fontFamily: 'monospace', color: expanded === c.name ? 'var(--code-green)' : 'var(--text-primary)' }}>
+              {c.name}
+            </span>
+            <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{c.count}</span>
+          </div>
+          {expanded === c.name && detail[c.name] && (
+            <div style={{ padding: '8px 16px 12px', borderBottom: '1px solid var(--border-subtle)' }}>
+              {/* Schema fields */}
+              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-tertiary)', marginBottom: 6 }}>
+                Champs
+              </div>
+              {detail[c.name].schema?.properties && Object.entries(detail[c.name].schema.properties).map(([k, v]) => (
+                <div key={k} style={{ display: 'flex', gap: 8, fontSize: 11, marginBottom: 3, alignItems: 'baseline' }}>
+                  <span style={{ fontFamily: 'monospace', color: 'var(--code-green)', minWidth: 90, flexShrink: 0 }}>{k}</span>
+                  <span style={{ color: 'var(--code-orange)', fontSize: 10 }}>{v.type}</span>
+                </div>
+              ))}
+              {/* Sample */}
+              {detail[c.name].sample?.length > 0 && (
+                <>
+                  <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-tertiary)', margin: '10px 0 6px' }}>
+                    Exemple
+                  </div>
+                  <pre style={{
+                    fontSize: 10, color: 'var(--code-blue)', background: 'var(--bg-primary)',
+                    border: '1px solid var(--border)', borderRadius: 4,
+                    padding: '8px', overflowX: 'auto', lineHeight: 1.5, margin: 0,
+                    maxHeight: 200, overflowY: 'auto',
+                  }}>
+                    {JSON.stringify(detail[c.name].sample[0], null, 2)}
+                  </pre>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function QuizSidebar({ quizzes, currentQuizId, unlockedLevels, isCompleted, onSelectQuiz }) {
   return (
     <div style={{
@@ -92,6 +185,7 @@ export default function QuizPage() {
   const [quizzes, setQuizzes] = useState([]);
   const [currentQuiz, setCurrentQuiz] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [collectionsOpen, setCollectionsOpen] = useState(false);
   const { progress, markCompleted, isCompleted } = useProgress();
 
   useEffect(() => {
@@ -130,20 +224,26 @@ export default function QuizPage() {
           />
         )}
         <div style={{ flex: 1, padding: '0 24px', minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
             <button
               className="btn btn-ghost btn-small"
               onClick={() => setSidebarOpen(o => !o)}
               style={{ display: 'flex', alignItems: 'center', gap: 5 }}
-              title={sidebarOpen ? 'Masquer la liste' : 'Afficher la liste des défis'}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                {sidebarOpen
-                  ? <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>
-                  : <><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></>
-                }
+                <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
               </svg>
-              {sidebarOpen ? 'Masquer' : 'Liste des défis'}
+              {sidebarOpen ? 'Masquer défis' : 'Liste des défis'}
+            </button>
+            <button
+              className="btn btn-ghost btn-small"
+              onClick={() => setCollectionsOpen(o => !o)}
+              style={{ display: 'flex', alignItems: 'center', gap: 5 }}
+            >
+              {collectionsOpen ? 'Masquer collections' : 'Collections'}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/>
+              </svg>
             </button>
           </div>
           <QuizRunner
@@ -155,6 +255,7 @@ export default function QuizPage() {
             onNext={handleNext}
           />
         </div>
+        {collectionsOpen && <CollectionsPanel />}
       </div>
     );
   }
