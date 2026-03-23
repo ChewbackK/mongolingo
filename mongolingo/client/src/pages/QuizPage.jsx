@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import LevelSelect from '../components/Quiz/LevelSelect';
 import QuizRunner from '../components/Quiz/QuizRunner';
 import useProgress from '../hooks/useProgress';
@@ -47,23 +47,31 @@ export default function QuizPage() {
 
   const unlockedLevels = useMemo(
     () => computeUnlockedLevels(quizzes, isCompleted),
-    [quizzes, progress]
+    [quizzes, isCompleted]
   );
 
   const resumeQuiz = useMemo(
     () => findResumeQuiz(quizzes, unlockedLevels, isCompleted),
-    [quizzes, unlockedLevels, progress]
+    [quizzes, unlockedLevels, isCompleted]
+  );
+
+  const nextQuiz = useMemo(
+    () => currentQuiz ? computeNextQuiz(quizzes, currentQuiz, unlockedLevels) : null,
+    [quizzes, currentQuiz, unlockedLevels]
+  );
+  const handleNext = useCallback(
+    () => setCurrentQuiz(nextQuiz),
+    [nextQuiz]
   );
 
   if (currentQuiz) {
-    const nextQuiz = computeNextQuiz(quizzes, currentQuiz, unlockedLevels);
     return (
       <QuizRunner
         quiz={currentQuiz}
         onBack={() => setCurrentQuiz(null)}
         onComplete={markCompleted}
         nextQuiz={nextQuiz}
-        onNext={() => setCurrentQuiz(nextQuiz)}
+        onNext={handleNext}
       />
     );
   }
@@ -73,11 +81,11 @@ export default function QuizPage() {
       <div className="flex items-center justify-between" style={{ marginBottom: 8 }}>
         <h1 style={{ marginBottom: 0 }}>Quiz MongoDB</h1>
         <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-          {progress.completed.length}/31
+          {progress.completed.length}/{quizzes.length || 31}
         </span>
       </div>
       <div className="progress-bar-container" style={{ marginBottom: 20 }}>
-        <div className="progress-bar-fill" style={{ width: `${(progress.completed.length / 31) * 100}%` }} />
+        <div className="progress-bar-fill" style={{ width: `${(progress.completed.length / (quizzes.length || 31)) * 100}%` }} />
       </div>
 
       {resumeQuiz && (

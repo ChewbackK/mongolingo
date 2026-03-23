@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const STORAGE_KEY = 'mongolingo-progress';
 
@@ -30,7 +30,10 @@ export default function useProgress() {
     }));
   };
 
-  const isCompleted = (quizId) => progress.completed.includes(quizId);
+  const isCompleted = useCallback(
+    (quizId) => progress.completed.includes(quizId),
+    [progress.completed]
+  );
 
   const reset = () => {
     setProgress(initialState);
