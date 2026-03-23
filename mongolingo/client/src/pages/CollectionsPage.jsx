@@ -21,7 +21,10 @@ export default function CollectionsPage() {
     setSelected(name);
     try {
       const [schemaRes, sampleRes] = await Promise.all([
-        fetch(`/api/collections/${name}/schema`).then(r => r.json()),
+        fetch(`/api/collections/${name}/schema`).then(r => {
+          if (!r.ok) throw new Error('unavailable');
+          return r.json();
+        }),
         fetch(`/api/collections/${name}/sample`).then(r => {
           if (!r.ok) throw new Error('unavailable');
           return r.json();
