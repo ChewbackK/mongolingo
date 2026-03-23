@@ -3,7 +3,7 @@ import QCM from './QCM';
 import FillBlanks from './FillBlanks';
 import FreeInput from './FreeInput';
 
-export default function QuizRunner({ quiz, onBack, onComplete }) {
+export default function QuizRunner({ quiz, onBack, onComplete, nextQuiz, onNext }) {
   const [fullQuiz, setFullQuiz] = useState(null);
   const [showSolution, setShowSolution] = useState(false);
   const [solutionResult, setSolutionResult] = useState(null);
@@ -50,10 +50,6 @@ export default function QuizRunner({ quiz, onBack, onComplete }) {
 
   return (
     <div>
-      <button className="btn btn-ghost back-btn" onClick={onBack}>
-        ← Retour
-      </button>
-
       <div className="quiz-header">
         <span className="quiz-level">Niveau {fullQuiz.niveau}</span>
         <span className="quiz-mode">{fullQuiz.mode}</span>
@@ -64,12 +60,28 @@ export default function QuizRunner({ quiz, onBack, onComplete }) {
 
       <ModeComponent quiz={fullQuiz} onResult={handleResult} />
 
-      <div className="flex gap-8 mt-24">
+      <div className="flex gap-8 mt-24" style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+        <button className="btn btn-ghost" onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6"/></svg>
+          Retour
+        </button>
+
         {!showSolution && (
           <>
             <button className="btn" onClick={handleGetHint}>Indice</button>
             <button className="btn" onClick={handleRevealSolution}>Voir la solution</button>
           </>
+        )}
+
+        {answered && nextQuiz && (
+          <button
+            className="btn btn-accent"
+            onClick={onNext}
+            style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            Défi suivant — #{String(nextQuiz.id).padStart(2, '0')}
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
         )}
       </div>
 
