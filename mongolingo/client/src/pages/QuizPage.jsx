@@ -67,6 +67,7 @@ export default function QuizPage() {
   if (currentQuiz) {
     return (
       <QuizRunner
+        key={currentQuiz.id}
         quiz={currentQuiz}
         onBack={() => setCurrentQuiz(null)}
         onComplete={markCompleted}
