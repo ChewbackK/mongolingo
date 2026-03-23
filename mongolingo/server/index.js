@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { connectDB } = require('./db/connection');
+const dataRouter = require('./routes/data');
 
 const app = express();
 app.use(cors());
@@ -16,11 +17,9 @@ async function start() {
 
     // Auto-load demo data if all collections are empty
     try {
-      const COLLECTIONS = ['clients', 'projets', 'employes', 'appareils_iot', 'mesures_iot'];
-      const counts = await Promise.all(COLLECTIONS.map(n => db.collection(n).countDocuments()));
+      const counts = await Promise.all(dataRouter.COLLECTIONS.map(n => db.collection(n).countDocuments()));
       if (counts.every(c => c === 0)) {
         console.log('Collections vides, chargement automatique des données de démo...');
-        const dataRouter = require('./routes/data');
         await dataRouter.loadDemoData(db);
         console.log('Données de démo chargées.');
       }
@@ -37,7 +36,7 @@ async function start() {
   app.use('/api/health', require('./routes/health'));
   app.use('/api/quiz', require('./routes/quiz'));
   app.use('/api/collections', require('./routes/collections'));
-  app.use('/api/data', require('./routes/data'));
+  app.use('/api/data', dataRouter);
 
   // Serve client build in production
   if (process.env.NODE_ENV === 'production') {

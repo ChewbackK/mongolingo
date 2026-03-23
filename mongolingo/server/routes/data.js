@@ -183,3 +183,4 @@ router.post('/restore', async (req, res) => {
 
 module.exports = router;
 module.exports.loadDemoData = loadDemoData;
+module.exports.COLLECTIONS = COLLECTIONS;
