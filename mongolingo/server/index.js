@@ -13,6 +13,21 @@ async function start() {
   try {
     const db = await connectDB();
     app.locals.db = db;
+
+    // Auto-load demo data if all collections are empty
+    try {
+      const COLLECTIONS = ['clients', 'projets', 'employes', 'appareils_iot', 'mesures_iot'];
+      const counts = await Promise.all(COLLECTIONS.map(n => db.collection(n).countDocuments()));
+      if (counts.every(c => c === 0)) {
+        console.log('Collections vides, chargement automatique des données de démo...');
+        const dataRouter = require('./routes/data');
+        await dataRouter.loadDemoData(db);
+        console.log('Données de démo chargées.');
+      }
+    } catch (autoLoadErr) {
+      console.warn(`Auto-chargement ignoré : ${autoLoadErr.message}`);
+    }
+
   } catch (err) {
     console.error(`MongoDB non disponible: ${err.message}`);
     console.log('Le serveur demarre sans connexion MongoDB. Lancez mongod puis rechargez.');
