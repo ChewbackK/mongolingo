@@ -36,9 +36,62 @@ function computeNextQuiz(quizzes, currentQuiz, unlockedLevels) {
   return accessible[idx + 1];
 }
 
+const LEVEL_TITLES = ['Lecture basique', 'Filtres et opérateurs', 'Modifications et index', 'Agrégation', 'Pipelines complexes'];
+
+function QuizSidebar({ quizzes, currentQuizId, unlockedLevels, isCompleted, onSelectQuiz }) {
+  return (
+    <div style={{
+      width: 220, flexShrink: 0,
+      background: 'var(--bg-surface)', borderRight: '1px solid var(--border)',
+      overflowY: 'auto', padding: '16px 0',
+      position: 'sticky', top: 48, maxHeight: 'calc(100vh - 48px)',
+    }}>
+      {LEVELS.map((niveau, i) => {
+        const levelQuizzes = quizzes.filter(q => q.niveau === niveau).sort((a, b) => a.id - b.id);
+        const locked = !unlockedLevels[i];
+        return (
+          <div key={niveau} style={{ marginBottom: 8, opacity: locked ? 0.4 : 1 }}>
+            <div style={{ padding: '4px 16px', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.6px', color: 'var(--text-tertiary)', marginBottom: 2 }}>
+              N{niveau} — {LEVEL_TITLES[i]}
+            </div>
+            {locked ? (
+              <div style={{ padding: '4px 16px', fontSize: 11, color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: 5 }}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Verrouillé
+              </div>
+            ) : levelQuizzes.map(q => {
+              const done = isCompleted(q.id);
+              const active = q.id === currentQuizId;
+              return (
+                <div
+                  key={q.id}
+                  onClick={() => onSelectQuiz(q)}
+                  style={{
+                    padding: '5px 16px', cursor: 'pointer', fontSize: 12,
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    background: active ? 'var(--accent-dim)' : 'transparent',
+                    borderLeft: active ? '2px solid var(--accent)' : '2px solid transparent',
+                    color: done ? 'var(--text-tertiary)' : 'var(--text-primary)',
+                  }}
+                >
+                  <span style={{ fontFamily: 'monospace', fontSize: 10, color: done ? 'var(--success)' : active ? 'var(--accent)' : 'var(--text-tertiary)', minWidth: 16 }}>
+                    {done ? '✓' : String(q.id).padStart(2, '0')}
+                  </span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>{q.enonce}</span>
+                </div>
+              );
+            })}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function QuizPage() {
   const [quizzes, setQuizzes] = useState([]);
   const [currentQuiz, setCurrentQuiz] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { progress, markCompleted, isCompleted } = useProgress();
 
   useEffect(() => {
@@ -66,14 +119,43 @@ export default function QuizPage() {
 
   if (currentQuiz) {
     return (
-      <QuizRunner
-        key={currentQuiz.id}
-        quiz={currentQuiz}
-        onBack={() => setCurrentQuiz(null)}
-        onComplete={markCompleted}
-        nextQuiz={nextQuiz}
-        onNext={handleNext}
-      />
+      <div style={{ display: 'flex', margin: '0 -24px' }}>
+        {sidebarOpen && (
+          <QuizSidebar
+            quizzes={quizzes}
+            currentQuizId={currentQuiz.id}
+            unlockedLevels={unlockedLevels}
+            isCompleted={isCompleted}
+            onSelectQuiz={setCurrentQuiz}
+          />
+        )}
+        <div style={{ flex: 1, padding: '0 24px', minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+            <button
+              className="btn btn-ghost btn-small"
+              onClick={() => setSidebarOpen(o => !o)}
+              style={{ display: 'flex', alignItems: 'center', gap: 5 }}
+              title={sidebarOpen ? 'Masquer la liste' : 'Afficher la liste des défis'}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                {sidebarOpen
+                  ? <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>
+                  : <><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></>
+                }
+              </svg>
+              {sidebarOpen ? 'Masquer' : 'Liste des défis'}
+            </button>
+          </div>
+          <QuizRunner
+            key={currentQuiz.id}
+            quiz={currentQuiz}
+            onBack={() => setCurrentQuiz(null)}
+            onComplete={markCompleted}
+            nextQuiz={nextQuiz}
+            onNext={handleNext}
+          />
+        </div>
+      </div>
     );
   }
 
