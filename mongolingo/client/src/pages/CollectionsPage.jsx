@@ -5,9 +5,16 @@ export default function CollectionsPage() {
   const [selected, setSelected] = useState(null);
   const [schema, setSchema] = useState(null);
   const [sample, setSample] = useState(null);
+  const [dbError, setDbError] = useState(false);
 
   useEffect(() => {
-    fetch('/api/collections').then(r => r.json()).then(setCollections).catch(() => {});
+    fetch('/api/collections')
+      .then(r => {
+        if (!r.ok) throw new Error('unavailable');
+        return r.json();
+      })
+      .then(setCollections)
+      .catch(() => setDbError(true));
   }, []);
 
   const selectCollection = async (name) => {
@@ -15,7 +22,10 @@ export default function CollectionsPage() {
     try {
       const [schemaRes, sampleRes] = await Promise.all([
         fetch(`/api/collections/${name}/schema`).then(r => r.json()),
-        fetch(`/api/collections/${name}/sample`).then(r => r.json()),
+        fetch(`/api/collections/${name}/sample`).then(r => {
+          if (!r.ok) throw new Error('unavailable');
+          return r.json();
+        }),
       ]);
       setSchema(schemaRes);
       setSample(sampleRes);
@@ -35,6 +45,23 @@ export default function CollectionsPage() {
       </div>
     ));
   };
+
+  if (dbError) {
+    return (
+      <div>
+        <h1>Collections Cyberespar</h1>
+        <div style={{ padding: '16px 20px', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: 'var(--radius-lg)', color: 'var(--error)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, fontWeight: 600, fontSize: 14 }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            MongoDB non disponible
+          </div>
+          <div style={{ color: 'var(--text-secondary)', fontSize: 13 }}>
+            Lancez <code className="code-inline">mongod</code> puis rechargez la page.
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -56,10 +83,8 @@ export default function CollectionsPage() {
         <div className="schema-viewer">
           <h2>{schema.title}</h2>
           <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16 }}>{schema.description}</p>
-
           <h3>Schema</h3>
           {renderProperties(schema.properties, schema.required)}
-
           {sample && sample.length > 0 && (
             <div className="mt-24">
               <h3>Exemples</h3>
