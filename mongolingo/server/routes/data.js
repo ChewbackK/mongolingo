@@ -8,8 +8,14 @@ const execFileAsync = promisify(execFile);
 
 const BACKUP_DIR = path.join(__dirname, '../../backup');
 const COLLECTIONS = ['clients', 'projets', 'employes', 'appareils_iot', 'mesures_iot'];
+const DB_NAME = process.env.DB_NAME || 'mongolingo';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017';
 
 const DATA_DIR = path.join(__dirname, '../../data');
+
+function ensureBackupDir() {
+  fs.mkdirSync(BACKUP_DIR, { recursive: true });
+}
 
 async function loadDemoData(db) {
   // 1. Drop existing collections
@@ -102,11 +108,13 @@ router.get('/export/json', async (req, res) => {
 // GET /api/data/export/bson — mongodump
 router.get('/export/bson', async (req, res) => {
   try {
+    ensureBackupDir();
     const tmpDir = path.join(BACKUP_DIR, `_tmp_export_${Date.now()}`);
     fs.mkdirSync(tmpDir, { recursive: true });
 
     await execFileAsync('mongodump', [
-      '--db', 'mongolingo',
+      '--uri', MONGO_URI,
+      '--db', DB_NAME,
       '--out', tmpDir
     ]);
 
@@ -115,7 +123,7 @@ router.get('/export/bson', async (req, res) => {
 
     const archive = archiver('zip', { zlib: { level: 9 } });
     archive.pipe(res);
-    archive.directory(path.join(tmpDir, 'mongolingo'), 'mongolingo');
+    archive.directory(path.join(tmpDir, DB_NAME), DB_NAME);
 
     archive.on('end', () => {
       fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -130,12 +138,14 @@ router.get('/export/bson', async (req, res) => {
 // POST /api/data/backup — timestamped backup in backup/
 router.post('/backup', async (req, res) => {
   try {
+    ensureBackupDir();
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const backupPath = path.join(BACKUP_DIR, `backup-${timestamp}`);
     fs.mkdirSync(backupPath, { recursive: true });
 
     await execFileAsync('mongodump', [
-      '--db', 'mongolingo',
+      '--uri', MONGO_URI,
+      '--db', DB_NAME,
       '--out', backupPath
     ]);
 
@@ -148,10 +158,11 @@ router.post('/backup', async (req, res) => {
 // POST /api/data/restore — restore from most recent backup (or body.path)
 router.post('/restore', async (req, res) => {
   try {
+    ensureBackupDir();
     let restorePath;
 
     if (req.body.path) {
-      restorePath = path.join(__dirname, '../..', req.body.path, 'mongolingo');
+      restorePath = path.join(__dirname, '../..', req.body.path, DB_NAME);
     } else {
       // Find most recent backup
       const backups = fs.readdirSync(BACKUP_DIR)
@@ -162,7 +173,7 @@ router.post('/restore', async (req, res) => {
       if (backups.length === 0) {
         return res.status(404).json({ error: 'Aucune sauvegarde trouvee' });
       }
-      restorePath = path.join(BACKUP_DIR, backups[0], 'mongolingo');
+      restorePath = path.join(BACKUP_DIR, backups[0], DB_NAME);
     }
 
     if (!fs.existsSync(restorePath)) {
@@ -170,7 +181,8 @@ router.post('/restore', async (req, res) => {
     }
 
     await execFileAsync('mongorestore', [
-      '--db', 'mongolingo',
+      '--uri', MONGO_URI,
+      '--db', DB_NAME,
       '--drop',
       restorePath
     ]);

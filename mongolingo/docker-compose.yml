@@ -1,0 +1,36 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: mongolingo-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand({ ping: 1 }).ok"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mongolingo-app
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      MONGO_URI: mongodb://mongo:27017
+      DB_NAME: mongolingo
+    ports:
+      - "${APP_PORT:-5173}:3001"
+    volumes:
+      - ./backup:/app/backup
+
+volumes:
+  mongo_data:
