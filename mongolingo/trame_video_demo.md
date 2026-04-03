@@ -32,10 +32,10 @@ Montrer:
 
 ### 00:10 - 00:25 : Installation et rendu
 Dire:
-"Le projet est installe facilement sur Ubuntu recente, et le readme.txt contient les etapes de lancement ainsi que le lien de video de demonstration."
+"Le projet est installe facilement sur Ubuntu recente, et le readme.md contient les etapes de lancement ainsi que le lien de video de demonstration."
 
 Montrer:
-- `readme.txt`
+- `readme.md`
 - les commandes principales d'installation et de lancement
 
 ### 00:25 - 00:38 : Structure de rendu demandee
@@ -98,7 +98,7 @@ Dire:
 - Solutions expliquees et executees sur la base.
 - Construction des collections et schemas visibles.
 - Chargement de donnees + export/sauvegarde JSON/BSON.
-- Installation expliquee dans `readme.txt`.
+- Installation expliquee dans `readme.md`.
 
 ## Astuce pour la version finale
-Dans `readme.txt`, remplacer la section video placeholder par le lien final (YouTube non repertorie ou equivalent).
+Dans `readme.md`, remplacer la section video placeholder par le lien final (YouTube non repertorie ou equivalent).
