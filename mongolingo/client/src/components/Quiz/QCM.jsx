@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+
 export default function QCM({ quiz, onResult }) {
   const [selected, setSelected] = useState(null);
   const [answered, setAnswered] = useState(false);
@@ -8,8 +10,7 @@ export default function QCM({ quiz, onResult }) {
     if (answered) return;
     setSelected(index);
     setAnswered(true);
-    const correct = index === quiz.correct;
-    onResult(correct, quiz.options[index]);
+    onResult(index === quiz.correct, quiz.options[index]);
   };
 
   return (
@@ -23,7 +24,8 @@ export default function QCM({ quiz, onResult }) {
         }
         return (
           <button key={i} className={cls} onClick={() => handleSelect(i)}>
-            {opt}
+            <span className="qcm-letter">{LETTERS[i]}</span>
+            <span className="qcm-text">{opt}</span>
           </button>
         );
       })}

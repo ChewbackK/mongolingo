@@ -1,29 +1,31 @@
+import { Link } from 'react-router-dom';
+
 const LEVELS = [
-  { niveau: 1, titre: 'Lecture basique', desc: 'find, findOne, sort, limit, countDocuments' },
-  { niveau: 2, titre: 'Filtres et operateurs', desc: '$gt, $in, $all, $exists, $regex, dot notation' },
-  { niveau: 3, titre: 'Modifications et index', desc: '$set, $inc, $addToSet, deleteMany, createIndex, upsert' },
-  { niveau: 4, titre: 'Agregation', desc: '$group, $lookup, $unwind, $bucket, $project' },
-  { niveau: 5, titre: 'Pipelines complexes', desc: '$facet, multi-lookup, explain' },
+  { niveau: 1, titre: 'Lecture basique',        desc: 'find · findOne · sort · limit · countDocuments' },
+  { niveau: 2, titre: 'Filtres & opérateurs',   desc: '$gt · $in · $all · $exists · $regex · dot notation' },
+  { niveau: 3, titre: 'Modifications & index',  desc: '$set · $inc · $addToSet · deleteMany · createIndex' },
+  { niveau: 4, titre: 'Agrégation',             desc: '$group · $lookup · $unwind · $bucket · $project' },
+  { niveau: 5, titre: 'Pipelines complexes',    desc: '$facet · multi-lookup · explain' },
 ];
+
+function CheckIcon() {
+  return (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  );
+}
 
 function LockIcon() {
   return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0 }}>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0 }}>
       <rect x="3" y="11" width="18" height="11" rx="2"/>
       <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
     </svg>
   );
 }
 
-function CheckIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-      <polyline points="20 6 9 17 4 12"/>
-    </svg>
-  );
-}
-
-export default function LevelSelect({ quizzes, onSelectQuiz, isCompleted, unlockedLevels }) {
+export default function LevelSelect({ quizzes, onSelectQuiz, isCompleted, unlockedLevels, isLessonCompleted }) {
   return (
     <div className="level-grid">
       {LEVELS.map((level, i) => {
@@ -31,49 +33,90 @@ export default function LevelSelect({ quizzes, onSelectQuiz, isCompleted, unlock
         const completedCount = levelQuizzes.filter(q => isCompleted(q.id)).length;
         const isLocked = !unlockedLevels[i];
         const ratio = levelQuizzes.length === 0 ? 0 : completedCount / levelQuizzes.length;
-        const prevLevelQuizzes = quizzes.filter(q => q.niveau === level.niveau - 1);
-        const neededToUnlock = Math.ceil(prevLevelQuizzes.length * 0.8);
+        const isComplete = levelQuizzes.length > 0 && completedCount === levelQuizzes.length;
+        
+        // Calculs pour les prérequis du niveau précédent
+        const prevLevelQuizzes = i > 0 ? quizzes.filter(q => q.niveau === level.niveau - 1) : [];
+        const prevCompletedCount = prevLevelQuizzes.filter(q => isCompleted(q.id)).length;
+        const neededToUnlock = i > 0 ? Math.ceil(prevLevelQuizzes.length * 0.8) : 0;
+        const prevLevelUnlocked = i === 0 || prevCompletedCount >= neededToUnlock;
+
+        const lessonCompleted = isLessonCompleted(level.niveau);
 
         return (
-          <div key={level.niveau} className="level-group" style={isLocked ? { opacity: 0.4, pointerEvents: 'none' } : {}}>
-            <div className="flex items-center justify-between" style={{ marginBottom: 4 }}>
-              <div className="flex items-center" style={{ gap: 7 }}>
-                {isLocked && <LockIcon />}
-                <h2 style={{ marginBottom: 0 }}>Niveau {level.niveau} — {level.titre}</h2>
+          <div key={level.niveau} className={`level-card ${isLocked ? 'locked' : ''}`}>
+            <div className="level-card-header">
+              <span className="level-number">
+                {String(level.niveau).padStart(2, '0')}
+              </span>
+              <div className="level-card-info">
+                <div className="level-title">
+                  {level.titre}
+                  <Link 
+                    to="/lessons"
+                    style={{
+                      marginLeft: '8px',
+                      fontSize: '0.75rem',
+                      background: 'var(--green-dim)',
+                      color: 'var(--green)',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      textDecoration: 'none',
+                      pointerEvents: 'auto',
+                      border: '1px solid var(--green)'
+                    }}
+                  >
+                    📖 {lessonCompleted ? 'Réviser la leçon' : 'Leçon requise'}
+                  </Link>
+                </div>
+                <div className="level-desc">{level.desc}</div>
               </div>
-              <span style={{ fontSize: 12, color: completedCount === levelQuizzes.length && levelQuizzes.length > 0 ? 'var(--success)' : 'var(--text-tertiary)' }}>
-                {completedCount}/{levelQuizzes.length}
+              <span className={`level-count ${isComplete ? 'complete' : ''}`}>
+                {isComplete ? (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--green)' }}>
+                    <CheckIcon /> Terminé
+                  </span>
+                ) : (
+                  `${completedCount} / ${levelQuizzes.length}`
+                )}
               </span>
             </div>
 
-            <div className="progress-bar-container" style={{ height: 3, marginBottom: 8 }}>
-              <div className="progress-bar-fill" style={{ width: `${ratio * 100}%` }} />
+            <div className="level-progress-bar">
+              <div className="level-progress-fill" style={{ width: `${ratio * 100}%` }} />
             </div>
 
             {isLocked ? (
-              <div style={{ padding: '8px 12px', background: 'var(--bg-surface)', borderRadius: 'var(--radius)', color: 'var(--text-tertiary)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                Complétez {neededToUnlock}/{prevLevelQuizzes.length} défis du niveau {level.niveau - 1} pour débloquer
+              <div className="locked-message" style={{ display: 'flex', flexDirection: 'column', gap: '8px', pointerEvents: 'auto' }}>
+                {!lessonCompleted && (
+                  <div>
+                    <LockIcon />
+                    Lisez la <Link to="/lessons" style={{ textDecoration: 'underline', color: 'inherit', pointerEvents: 'auto' }}>Leçon {level.niveau}</Link> pour débloquer
+                  </div>
+                )}
+                {!prevLevelUnlocked && (
+                  <div>
+                    <LockIcon />
+                    Complétez {neededToUnlock} / {prevLevelQuizzes.length} défis du niveau {level.niveau - 1} pour débloquer
+                  </div>
+                )}
               </div>
             ) : (
-              <>
-                <p style={{ fontSize: 13, color: 'var(--text-tertiary)', marginBottom: 8 }}>{level.desc}</p>
-                <div className="quiz-list">
-                  {levelQuizzes.map(q => (
-                    <div
-                      key={q.id}
-                      className={`quiz-item ${isCompleted(q.id) ? 'completed' : ''}`}
-                      onClick={() => onSelectQuiz(q)}
-                    >
-                      <span className="quiz-id" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                        {isCompleted(q.id) ? <CheckIcon /> : String(q.id).padStart(2, '0')}
-                      </span>
-                      <span className="quiz-text">{q.enonce}</span>
-                      <span className="quiz-badge">{q.mode}</span>
-                    </div>
-                  ))}
-                </div>
-              </>
+              <div className="quiz-list">
+                {levelQuizzes.map(q => (
+                  <div
+                    key={q.id}
+                    className={`quiz-item ${isCompleted(q.id) ? 'completed' : ''}`}
+                    onClick={() => onSelectQuiz(q)}
+                  >
+                    <span className="quiz-id">
+                      {isCompleted(q.id) ? <CheckIcon /> : String(q.id).padStart(2, '0')}
+                    </span>
+                    <span className="quiz-text">{q.enonce}</span>
+                    <span className="quiz-badge">{q.mode}</span>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         );

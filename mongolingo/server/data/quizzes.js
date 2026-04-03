@@ -1,6 +1,6 @@
 const quizzes = [
   // ═══════════════════════════════════════════
-  // NIVEAU 1 — Lecture basique (6 questions)
+  // NIVEAU 1 — Lecture basique (10 questions)
   // ═══════════════════════════════════════════
   {
     id: 1,
@@ -112,9 +112,79 @@ const quizzes = [
       auto_execute_on_reveal: true
     }
   },
+  {
+    id: 32,
+    niveau: 1,
+    mode: "qcm",
+    collection: "clients",
+    enonce: "Trouver tous les clients situes a Brest",
+    hint: "Filtre simple par egalite sur le champ ville.",
+    options: [
+      'db.clients.find({ ville: "Brest" })',
+      'db.clients.findOne({ ville: "Brest" })',
+      'db.clients.search({ ville: "Brest" })',
+      'db.clients.find({ secteur: "Brest" })'
+    ],
+    correct: 0,
+    solution: {
+      query: 'db.clients.find({ ville: "Brest" })',
+      explanation: "find avec un filtre d'egalite retourne tous les documents dont le champ ville vaut Brest.",
+      auto_execute_on_reveal: true
+    }
+  },
+  {
+    id: 33,
+    niveau: 1,
+    mode: "blancs",
+    collection: "clients",
+    enonce: "Afficher nom et ville des 5 premiers clients tries par nom (ordre croissant)",
+    hint: "Combine projection, sort puis limit.",
+    template: 'db.clients.find({}, { ___: 1, ___: 1, _id: 0 }).sort({ ___: ___ }).limit(___)',
+    blanks: ["nom", "ville", "nom", "1", "5"],
+    solution: {
+      query: 'db.clients.find({}, { nom: 1, ville: 1, _id: 0 }).sort({ nom: 1 }).limit(5)',
+      explanation: "Projection pour limiter les champs, sort croissant avec 1, puis limit pour ne garder que 5 resultats.",
+      auto_execute_on_reveal: true
+    }
+  },
+  {
+    id: 34,
+    niveau: 1,
+    mode: "qcm",
+    collection: "projets",
+    enonce: "Recuperer un seul projet dont le titre est 'MarineWatch'",
+    hint: "findOne retourne un seul document.",
+    options: [
+      'db.projets.findOne({ titre: "MarineWatch" })',
+      'db.projets.find({ titre: "MarineWatch" })',
+      'db.projets.getOne({ titre: "MarineWatch" })',
+      'db.projets.findOne({ nom: "MarineWatch" })'
+    ],
+    correct: 0,
+    solution: {
+      query: 'db.projets.findOne({ titre: "MarineWatch" })',
+      explanation: "findOne est adapte pour recuperer un unique document selon un critere simple.",
+      auto_execute_on_reveal: true
+    }
+  },
+  {
+    id: 35,
+    niveau: 1,
+    mode: "blancs",
+    collection: "projets",
+    enonce: "Compter le nombre de projets dont le statut est 'en cours'",
+    hint: "countDocuments avec un filtre sur statut.",
+    template: 'db.projets.countDocuments({ ___: "___" })',
+    blanks: ["statut", "en cours"],
+    solution: {
+      query: 'db.projets.countDocuments({ statut: "en cours" })',
+      explanation: "countDocuments compte uniquement les documents qui correspondent au filtre fourni.",
+      auto_execute_on_reveal: true
+    }
+  },
 
   // ═══════════════════════════════════════════
-  // NIVEAU 2 — Filtres & operateurs (8 questions)
+  // NIVEAU 2 — Filtres & operateurs (10 questions)
   // ═══════════════════════════════════════════
   {
     id: 7,
@@ -256,9 +326,44 @@ const quizzes = [
       auto_execute_on_reveal: true
     }
   },
+  {
+    id: 36,
+    niveau: 2,
+    mode: "blancs",
+    collection: "projets",
+    enonce: "Trouver les projets dont le budget est compris entre 10000 et 30000 inclus",
+    hint: "Combine $gte et $lte sur le meme champ.",
+    template: 'db.projets.find({ budget: { ___: ___, ___: ___ } })',
+    blanks: ["$gte", "10000", "$lte", "30000"],
+    solution: {
+      query: 'db.projets.find({ budget: { $gte: 10000, $lte: 30000 } })',
+      explanation: "$gte fixe la borne basse (incluse) et $lte la borne haute (incluse).",
+      auto_execute_on_reveal: true
+    }
+  },
+  {
+    id: 37,
+    niveau: 2,
+    mode: "qcm",
+    collection: "appareils_iot",
+    enonce: "Trouver les appareils actifs qui ne sont pas de type 'gps'",
+    hint: "Combine un filtre booleen et l'operateur $ne.",
+    options: [
+      'db.appareils_iot.find({ actif: true, type: { $ne: "gps" } })',
+      'db.appareils_iot.find({ actif: "true", type: { $ne: "gps" } })',
+      'db.appareils_iot.find({ actif: true, type: { $not: "gps" } })',
+      'db.appareils_iot.find({ actif: true, type: "!gps" })'
+    ],
+    correct: 0,
+    solution: {
+      query: 'db.appareils_iot.find({ actif: true, type: { $ne: "gps" } })',
+      explanation: "$ne signifie 'different de'. Combine avec actif: true, cela donne un ET implicite entre les conditions.",
+      auto_execute_on_reveal: true
+    }
+  },
 
   // ═══════════════════════════════════════════
-  // NIVEAU 3 — Modifications & index (6 questions)
+  // NIVEAU 3 — Modifications & index (10 questions)
   // ═══════════════════════════════════════════
   {
     id: 15,
@@ -349,9 +454,70 @@ const quizzes = [
       auto_execute_on_reveal: false
     }
   },
+  {
+    id: 38,
+    niveau: 3,
+    mode: "blancs",
+    collection: "appareils_iot",
+    enonce: "Desactiver tous les appareils du bateau 'CoastRunner'",
+    hint: "updateMany avec $set sur actif.",
+    template: 'db.appareils_iot.updateMany({ bateau: "CoastRunner" }, { ___: { ___: ___ } })',
+    blanks: ["$set", "actif", "false"],
+    solution: {
+      query: 'db.appareils_iot.updateMany({ bateau: "CoastRunner" }, { $set: { actif: false } })',
+      explanation: "updateMany applique la modification a tous les documents correspondant au filtre.",
+      auto_execute_on_reveal: false
+    }
+  },
+  {
+    id: 39,
+    niveau: 3,
+    mode: "qcm",
+    collection: "clients",
+    enonce: "Inserer un nouveau client 'BlueHarbor' (secteur: logistique, ville: Lorient)",
+    hint: "insertOne ajoute un nouveau document.",
+    options: [
+      'db.clients.insertOne({ nom: "BlueHarbor", secteur: "logistique", ville: "Lorient" })',
+      'db.clients.insert({ nom: "BlueHarbor", secteur: "logistique", ville: "Lorient" })',
+      'db.clients.updateOne({ nom: "BlueHarbor" }, { secteur: "logistique", ville: "Lorient" })',
+      'db.clients.create({ nom: "BlueHarbor", secteur: "logistique", ville: "Lorient" })'
+    ],
+    correct: 0,
+    solution: {
+      query: 'db.clients.insertOne({ nom: "BlueHarbor", secteur: "logistique", ville: "Lorient" })',
+      explanation: "insertOne cree un document complet dans la collection cible.",
+      auto_execute_on_reveal: false
+    }
+  },
+  {
+    id: 40,
+    niveau: 3,
+    mode: "libre",
+    collection: "employes",
+    enonce: "Retirer la competence 'Docker' de l'employe 'Anais Quere'",
+    hint: "Utilise $pull pour supprimer une valeur d'un tableau.",
+    solution: {
+      query: 'db.employes.updateOne({ nom: "Anais Quere" }, { $pull: { competences: "Docker" } })',
+      explanation: "$pull supprime toutes les occurrences d'une valeur dans un tableau.",
+      auto_execute_on_reveal: false
+    }
+  },
+  {
+    id: 41,
+    niveau: 3,
+    mode: "libre",
+    collection: "mesures_iot",
+    enonce: "Creer un index compose sur appareil_id (ascendant) puis timestamp (descendant)",
+    hint: "createIndex accepte plusieurs champs dans l'ordre de tri voulu.",
+    solution: {
+      query: 'db.mesures_iot.createIndex({ appareil_id: 1, timestamp: -1 })',
+      explanation: "Un index compose optimise les requetes qui filtrent d'abord sur appareil_id puis trient sur timestamp.",
+      auto_execute_on_reveal: false
+    }
+  },
 
   // ═══════════════════════════════════════════
-  // NIVEAU 4 — Agregation (7 questions)
+  // NIVEAU 4 — Agregation (10 questions)
   // ═══════════════════════════════════════════
   {
     id: 21,
@@ -448,9 +614,50 @@ const quizzes = [
       auto_execute_on_reveal: true
     }
   },
+  {
+    id: 42,
+    niveau: 4,
+    mode: "blancs",
+    collection: "mesures_iot",
+    enonce: "Compter le nombre d'alertes par type de mesure",
+    hint: "$match pour filtrer puis $group pour compter.",
+    template: 'db.mesures_iot.aggregate([{ ___: { alerte: ___ } }, { ___: { _id: "___", nb_alertes: { ___: 1 } } }])',
+    blanks: ["$match", "true", "$group", "$type", "$sum"],
+    solution: {
+      query: 'db.mesures_iot.aggregate([{ $match: { alerte: true } }, { $group: { _id: "$type", nb_alertes: { $sum: 1 } } }])',
+      explanation: "On filtre les alertes, puis on regroupe par type pour compter les documents.",
+      auto_execute_on_reveal: true
+    }
+  },
+  {
+    id: 43,
+    niveau: 4,
+    mode: "libre",
+    collection: "projets",
+    enonce: "Pour les projets 'en cours', calculer par client le budget total et le nombre de projets",
+    hint: "$match puis $group avec $sum sur budget et sur 1.",
+    solution: {
+      query: 'db.projets.aggregate([{ $match: { statut: "en cours" } }, { $group: { _id: "$client_id", budget_total: { $sum: "$budget" }, nb_projets: { $sum: 1 } } }, { $sort: { budget_total: -1 } }])',
+      explanation: "Pipeline classique: filtrage, regroupement, puis tri des groupes selon une metrique calculee.",
+      auto_execute_on_reveal: true
+    }
+  },
+  {
+    id: 44,
+    niveau: 4,
+    mode: "libre",
+    collection: "employes",
+    enonce: "Compter combien d'employes possedent chaque competence",
+    hint: "$unwind le tableau competences, puis $group.",
+    solution: {
+      query: 'db.employes.aggregate([{ $unwind: "$competences" }, { $group: { _id: "$competences", nb_employes: { $sum: 1 } } }, { $sort: { nb_employes: -1 } }])',
+      explanation: "$unwind transforme chaque element du tableau en document distinct, ce qui permet ensuite un comptage fiable par valeur.",
+      auto_execute_on_reveal: true
+    }
+  },
 
   // ═══════════════════════════════════════════
-  // NIVEAU 5 — Pipelines complexes (4 questions)
+  // NIVEAU 5 — Pipelines complexes (10 questions)
   // ═══════════════════════════════════════════
   {
     id: 28,
@@ -501,6 +708,84 @@ const quizzes = [
     solution: {
       query: 'db.projets.find({ budget: { $gt: 10000 } }).explain("executionStats")',
       explanation: "explain('executionStats') affiche le plan d'execution : nombre de documents examines vs retournes, utilisation d'index, temps d'execution. Un ratio examine/retourne eleve indique qu'un index serait benefique.",
+      auto_execute_on_reveal: true
+    }
+  },
+  {
+    id: 45,
+    niveau: 5,
+    mode: "libre",
+    collection: "projets",
+    enonce: "Assembler un rapport projet + client + equipe (employes assignes)",
+    hint: "Utilise deux $lookup, dont un avec pipeline ($expr + $in).",
+    solution: {
+      query: 'db.projets.aggregate([{ $lookup: { from: "clients", localField: "client_id", foreignField: "_id", as: "client" } }, { $lookup: { from: "employes", let: { projetId: "$_id" }, pipeline: [{ $match: { $expr: { $in: ["$$projetId", "$projets"] } } }, { $project: { _id: 0, nom: 1, role: 1 } }], as: "equipe" } }, { $project: { titre: 1, statut: 1, client: { $arrayElemAt: ["$client.nom", 0] }, nb_equipe: { $size: "$equipe" }, equipe: 1 } }])',
+      explanation: "Pipeline multi-jointures: client via localField/foreignField, puis equipe via lookup pipeline et variable let.",
+      auto_execute_on_reveal: true
+    }
+  },
+  {
+    id: 46,
+    niveau: 5,
+    mode: "libre",
+    collection: "mesures_iot",
+    enonce: "Produire un rapport multi-facettes des mesures (alertes par type + stats globales)",
+    hint: "$facet permet plusieurs sous-pipelines en parallele.",
+    solution: {
+      query: 'db.mesures_iot.aggregate([{ $facet: { alertes_par_type: [{ $match: { alerte: true } }, { $group: { _id: "$type", count: { $sum: 1 } } }, { $sort: { count: -1 } }], stats_globales: [{ $group: { _id: null, nb_mesures: { $sum: 1 }, valeur_moyenne: { $avg: "$valeur" }, valeur_max: { $max: "$valeur" } } }] } }])',
+      explanation: "$facet calcule plusieurs vues analytiques en une seule requete d'agregation.",
+      auto_execute_on_reveal: true
+    }
+  },
+  {
+    id: 47,
+    niveau: 5,
+    mode: "libre",
+    collection: "mesures_iot",
+    enonce: "Par bateau, compter les alertes sur la journee du 17 mars 2026 et donner la valeur max",
+    hint: "Filtre date + lookup appareils + group avec $cond.",
+    solution: {
+      query: 'db.mesures_iot.aggregate([{ $match: { timestamp: { $gte: ISODate("2026-03-17T00:00:00Z"), $lt: ISODate("2026-03-18T00:00:00Z") } } }, { $lookup: { from: "appareils_iot", localField: "appareil_id", foreignField: "id_appareil", as: "appareil" } }, { $unwind: "$appareil" }, { $group: { _id: "$appareil.bateau", nb_mesures: { $sum: 1 }, nb_alertes: { $sum: { $cond: ["$alerte", 1, 0] } }, max_valeur: { $max: "$valeur" } } }, { $sort: { nb_alertes: -1, nb_mesures: -1 } }])',
+      explanation: "On combine filtrage temporel, jointure inter-collections et calcul conditionnel dans le groupement.",
+      auto_execute_on_reveal: true
+    }
+  },
+  {
+    id: 48,
+    niveau: 5,
+    mode: "libre",
+    collection: "mesures_iot",
+    enonce: "Analyser les performances d'un pipeline d'alertes recentes avec explain",
+    hint: "Ajoute .explain(\"executionStats\") a la fin de aggregate(...).",
+    solution: {
+      query: 'db.mesures_iot.aggregate([{ $match: { alerte: true } }, { $sort: { timestamp: -1 } }, { $limit: 20 }]).explain("executionStats")',
+      explanation: "explain sur aggregate permet d'inspecter le plan et le cout reel du pipeline (docs examines, temps, index utilises).",
+      auto_execute_on_reveal: true
+    }
+  },
+  {
+    id: 49,
+    niveau: 5,
+    mode: "libre",
+    collection: "clients",
+    enonce: "Pour chaque client, afficher nb_projets et budget_total via lookup",
+    hint: "lookup vers projets puis project avec $size et $sum sur le tableau.",
+    solution: {
+      query: 'db.clients.aggregate([{ $lookup: { from: "projets", localField: "_id", foreignField: "client_id", as: "projets" } }, { $project: { nom: 1, nb_projets: { $size: "$projets" }, budget_total: { $sum: "$projets.budget" }, statuts: "$projets.statut" } }, { $sort: { budget_total: -1 } }])',
+      explanation: "lookup enrichit chaque client avec son tableau de projets, puis project calcule des indicateurs consolides.",
+      auto_execute_on_reveal: true
+    }
+  },
+  {
+    id: 50,
+    niveau: 5,
+    mode: "libre",
+    collection: "projets",
+    enonce: "Top 10 projets par taille d'equipe, puis budget",
+    hint: "lookup employes (pipeline) puis project $size, sort et limit.",
+    solution: {
+      query: 'db.projets.aggregate([{ $lookup: { from: "employes", let: { projetId: "$_id" }, pipeline: [{ $match: { $expr: { $in: ["$$projetId", "$projets"] } } }], as: "equipe" } }, { $project: { titre: 1, statut: 1, taille_equipe: { $size: "$equipe" }, budget: 1 } }, { $sort: { taille_equipe: -1, budget: -1 } }, { $limit: 10 }])',
+      explanation: "Exemple de ranking multi-criteres apres une jointure pipeline entre projets et employes.",
       auto_execute_on_reveal: true
     }
   }

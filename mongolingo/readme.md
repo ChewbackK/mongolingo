@@ -71,17 +71,17 @@ Premiere utilisation
 
 Contenu
 -------
-- 31 questions reparties en 5 niveaux progressifs
+- 50 questions reparties en 5 niveaux progressifs (10 quiz par niveau)
 - 5 collections MongoDB (clients, projets, employes, appareils_iot, mesures_iot)
 - Schemas JSON dans schemas/
 - Donnees de demo dans data/
 - Export JSON/BSON et systeme de sauvegarde
 - Progression pedagogique (condensee) :
-   - Niveau 1 (6 quiz) : lecture basique (find, findOne, projection, sort, limit, countDocuments)
-   - Niveau 2 (8 quiz) : filtres et operateurs ($gt, $in, $all, dot notation)
-   - Niveau 3 (6 quiz) : modifications et index (insert, update avec $set/$push/$pull, delete, createIndex)
-   - Niveau 4 (7 quiz) : aggregation de base ($match, $group, $sum/$avg, $project)
-   - Niveau 5 (4 quiz) : pipelines avances ($lookup, $unwind)
+   - Niveau 1 (10 quiz) : lecture basique (find, findOne, projection, sort, limit, countDocuments)
+   - Niveau 2 (10 quiz) : filtres et operateurs ($gt, $in, $all, dot notation)
+   - Niveau 3 (10 quiz) : modifications et index (insert, update avec $set/$push/$pull, delete, createIndex)
+   - Niveau 4 (10 quiz) : aggregation de base ($match, $group, $sum/$avg, $project)
+   - Niveau 5 (10 quiz) : pipelines avances ($lookup, $unwind)
    - Accompagnement utilisateur : niveaux 1-2 guides (QCM + textes a trous), niveau 3 en transition, niveaux 4-5 majoritairement en saisie libre
 
 Demonstration video

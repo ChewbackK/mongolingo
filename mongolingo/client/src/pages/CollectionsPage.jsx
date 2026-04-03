@@ -53,9 +53,17 @@ export default function CollectionsPage() {
     return (
       <div>
         <h1>Collections Cyberespar</h1>
-        <div style={{ padding: '16px 20px', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: 'var(--radius-lg)', color: 'var(--error)' }}>
+        <div style={{
+          padding: '16px 20px',
+          background: 'var(--error-dim)',
+          border: '1px solid rgba(255,68,85,0.2)',
+          borderRadius: 'var(--radius-lg)',
+          color: 'var(--error)',
+        }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, fontWeight: 600, fontSize: 14 }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
             MongoDB non disponible
           </div>
           <div style={{ color: 'var(--text-secondary)', fontSize: 13 }}>
@@ -76,7 +84,9 @@ export default function CollectionsPage() {
             className={`collection-card ${selected === c.name ? 'active' : ''}`}
             onClick={() => selectCollection(c.name)}
           >
-            <span className="collection-name">{c.name}</span>
+            <div>
+              <span className="collection-name">{c.name}</span>
+            </div>
             <span className="collection-count">{c.count} documents</span>
           </div>
         ))}
@@ -84,10 +94,16 @@ export default function CollectionsPage() {
 
       {selected && schema && (
         <div className="schema-viewer">
-          <h2>{schema.title}</h2>
-          <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16 }}>{schema.description}</p>
-          <h3>Schema</h3>
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 16, marginBottom: 6 }}>
+              {schema.title}
+            </div>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{schema.description}</p>
+          </div>
+
+          <h3>Champs</h3>
           {renderProperties(schema.properties, schema.required)}
+
           {sample && sample.length > 0 && (
             <div className="mt-24">
               <h3>Exemples</h3>

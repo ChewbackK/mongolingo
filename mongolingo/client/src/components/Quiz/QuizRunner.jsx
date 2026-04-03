@@ -8,6 +8,7 @@ export default function QuizRunner({ quiz, onBack, onComplete, nextQuiz, onNext 
   const [showSolution, setShowSolution] = useState(false);
   const [solutionResult, setSolutionResult] = useState(null);
   const [answered, setAnswered] = useState(false);
+  const [hintText, setHintText] = useState(null);
 
   useEffect(() => {
     fetch(`/api/quiz/${quiz.id}`)
@@ -16,7 +17,7 @@ export default function QuizRunner({ quiz, onBack, onComplete, nextQuiz, onNext 
       .catch(() => {});
   }, [quiz.id]);
 
-  if (!fullQuiz) return <div className="loading">Chargement...</div>;
+  if (!fullQuiz) return <div className="loading">Chargement</div>;
 
   const handleResult = (correct, answer) => {
     setAnswered(true);
@@ -30,7 +31,7 @@ export default function QuizRunner({ quiz, onBack, onComplete, nextQuiz, onNext 
         const res = await fetch(`/api/quiz/${quiz.id}/run`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: fullQuiz.solution.query })
+          body: JSON.stringify({ query: fullQuiz.solution.query }),
         });
         const data = await res.json();
         if (data.success) setSolutionResult(data.data);
@@ -42,7 +43,7 @@ export default function QuizRunner({ quiz, onBack, onComplete, nextQuiz, onNext 
     try {
       const res = await fetch(`/api/quiz/${quiz.id}/hint`);
       const data = await res.json();
-      alert(data.hint);
+      setHintText(data.hint);
     } catch {}
   };
 
@@ -50,6 +51,7 @@ export default function QuizRunner({ quiz, onBack, onComplete, nextQuiz, onNext 
 
   return (
     <div>
+      {/* Tags */}
       <div className="quiz-header">
         <span className="quiz-level">Niveau {fullQuiz.niveau}</span>
         <span className="quiz-mode">{fullQuiz.mode}</span>
@@ -60,6 +62,29 @@ export default function QuizRunner({ quiz, onBack, onComplete, nextQuiz, onNext 
 
       <ModeComponent quiz={fullQuiz} onResult={handleResult} />
 
+      {/* Hint */}
+      {hintText && (
+        <div className="mt-16" style={{
+          padding: '12px 16px',
+          background: 'var(--amber-dim)',
+          border: '1px solid rgba(255,176,32,0.2)',
+          borderRadius: 'var(--radius-lg)',
+          fontSize: 13,
+          color: 'var(--amber)',
+          display: 'flex',
+          gap: 8,
+          alignItems: 'flex-start',
+        }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0, marginTop: 1 }}>
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          {hintText}
+        </div>
+      )}
+
+      {/* Action bar */}
       <div className="flex gap-8 mt-24" style={{ alignItems: 'center', flexWrap: 'wrap' }}>
         <button className="btn btn-ghost" onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6"/></svg>
@@ -68,8 +93,20 @@ export default function QuizRunner({ quiz, onBack, onComplete, nextQuiz, onNext 
 
         {!showSolution && (
           <>
-            <button className="btn" onClick={handleGetHint}>Indice</button>
-            <button className="btn" onClick={handleRevealSolution}>Voir la solution</button>
+            {!hintText && (
+              <button className="btn" onClick={handleGetHint}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                Indice
+              </button>
+            )}
+            <button className="btn" onClick={handleRevealSolution}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+              Solution
+            </button>
           </>
         )}
 
@@ -85,6 +122,7 @@ export default function QuizRunner({ quiz, onBack, onComplete, nextQuiz, onNext 
         )}
       </div>
 
+      {/* Solution */}
       {showSolution && (
         <div className="solution mt-24">
           <h3>Solution</h3>
@@ -92,7 +130,7 @@ export default function QuizRunner({ quiz, onBack, onComplete, nextQuiz, onNext 
           <p className="explanation">{fullQuiz.solution.explanation}</p>
           {solutionResult !== null && (
             <div className="mt-16">
-              <h3>Resultat reel</h3>
+              <h3>Résultat réel</h3>
               <pre className="code-block result-block">
                 {JSON.stringify(solutionResult, null, 2)}
               </pre>

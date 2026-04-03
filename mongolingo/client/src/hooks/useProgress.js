@@ -2,13 +2,19 @@ import { useState, useEffect, useCallback } from 'react';
 
 const STORAGE_KEY = 'mongolingo-progress';
 
-const initialState = { completed: [], history: [] };
+const initialState = { completed: [], history: [], completedLessons: [] };
 
 export default function useProgress() {
   const [progress, setProgress] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved) : initialState;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Migration rétroactive des anciens états locaux
+        if (!parsed.completedLessons) parsed.completedLessons = [];
+        return parsed;
+      }
+      return initialState;
     } catch {
       return initialState;
     }
@@ -35,10 +41,24 @@ export default function useProgress() {
     [progress.completed]
   );
 
+  const markLessonCompleted = (level) => {
+    setProgress(prev => ({
+      ...prev,
+      completedLessons: prev.completedLessons.includes(level) 
+        ? prev.completedLessons 
+        : [...prev.completedLessons, level]
+    }));
+  };
+
+  const isLessonCompleted = useCallback(
+    (level) => progress.completedLessons.includes(level),
+    [progress.completedLessons]
+  );
+
   const reset = () => {
     setProgress(initialState);
     localStorage.removeItem(STORAGE_KEY);
   };
 
-  return { progress, markCompleted, isCompleted, reset };
+  return { progress, markCompleted, isCompleted, markLessonCompleted, isLessonCompleted, reset };
 }
